@@ -1,1 +1,1 @@
-OneStopCloud Web Portal!
+OneStopCloud!
