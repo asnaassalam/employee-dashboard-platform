@@ -148,22 +148,18 @@
     }
 
     .btn {
-        background: red;
-        border: 2px solid red;
+        border: none;
         cursor: pointer;
         margin-left: 180px;
         margin-top: 130px;
-        border-radius: 3px;
+        background: none;
         width: 60px;
         height: 35px;
         transition: all 0.4s ease;
 
     }
 
-    .btn:hover {
-        background: none;
-
-    }
+   
 
     .icon:hover {
         color: red;

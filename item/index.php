@@ -58,21 +58,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_item'])) {
 }
 
 // Handle updating checklist items status
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_item'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_POST['update_status'])) {
     $itemId = intval($_POST['itemId']);
-    $newStatus = $_POST['status'] == 1 ? 0 : 1; // Toggle status between 0 and 1
+    $currentStatus = intval($_POST['update_status']); // Convert 'on' or 'off' to integer 1 or 0
+    $newStatus = $currentStatus === 1 ? 0 : 1; // Toggle status between 0 and 1
+
     $update_sql = "UPDATE item SET status = ? WHERE itemId = ? AND taskList = ?";
     $stmt = $conn->prepare($update_sql);
     $stmt->bind_param("iis", $newStatus, $itemId, $taskList); // Use "iis": integer, integer, string
     $stmt->execute();
     $stmt->close();
-    header("Location: index.php?taskList=" . urlencode($taskList));
-    exit();
+
+    
+
+    // No need to redirect, update is done via AJAX
 }
 
+
+
+
 // Handle deleting checklist items
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_item'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_POST['delete_item'])) {
     $itemId = intval($_POST['itemId']);
+    
+    // Ensure taskList is retrieved from the URL or form data
+    $taskList = isset($_GET['taskList']) ? $_GET['taskList'] : (isset($_POST['taskList']) ? $_POST['taskList'] : '');
+    
+    if (empty($taskList)) {
+        die("TaskList parameter is missing.");
+    }
+    
     $delete_sql = "DELETE FROM item WHERE itemId = ? AND taskList = ?";
     $stmt = $conn->prepare($delete_sql);
     $stmt->bind_param("is", $itemId, $taskList); // Use "is": integer, string
@@ -81,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_item'])) {
     header("Location: index.php?taskList=" . urlencode($taskList));
     exit();
 }
+
 
 // Fetch checklist items
 $items_sql = "SELECT itemId, description, status FROM item WHERE taskList = ?";
@@ -93,6 +109,7 @@ $stmt->close();
 
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
@@ -178,7 +195,7 @@ $conn->close();
     .items {
         margin-bottom: 20px;
         width: 90%;
-        /* Make child elements take full width */
+
 
     }
 
@@ -207,7 +224,7 @@ $conn->close();
         color: white;
         width: 100%;
         max-width: 250px;
-        /* Limit input width */
+       
     }
 
     .checklist button {
@@ -324,41 +341,25 @@ $conn->close();
         color: #ff3700;
     }
 
-    .items li .delete-icon {
-        color: white;
-        cursor: pointer;
-        background: red;
-        transition: color 0.3s;
-        margin-left: 5px;
-    }
-
-    .items li button i:hover {
-        transform: scale(1.4);
-    }
-
-    .items li .update-icon {
-        border: 2px solid #ff3700;
-        background: none;
-        padding: 6px 10px;
-
-    }
-
-    .items li .update-icon:hover {
-
-        background: #ff3700;
-
-
-    }
 
     .items li button {
-        background: red;
+        background: none;
         color: white;
         cursor: pointer;
         transition: 0.3s;
         padding: 8px 12px;
         border: none;
-        border-radius: 5px;
 
+    }
+
+    
+    .items li button i {
+        transition: 0.3s;
+        font-size: 18px;
+    }
+    .items li button i:hover {
+        color: red;
+        transform: scale(1.3);
     }
 
     #searchBar {
@@ -462,6 +463,13 @@ $conn->close();
     #description:focus {
         outline: none;
     }
+    .no-items {
+            display: none;
+            font-size: 20px;
+            text-align: center;
+            color: red;
+           
+        }
     </style>
 </head>
 
@@ -488,7 +496,7 @@ $conn->close();
 
 
     <div class="task-details" style="text-align: center;">
-        <p style="margin-top: 28px; font-size: 50px; color: white; margin-bottom: 10px;"><?php echo $taskList; ?></p>
+        <p style="margin-top: 28px; font-size: 53px; color: white; margin-bottom: 10px; font-family: Roboto, sans-serif; font-weight: 350; font-style: italic;"><?php echo $taskList; ?></p>
         <p style="font-size: 18px; color:white;"><?php echo $dateCreated; ?></p>
     </div>
 
@@ -503,18 +511,17 @@ $conn->close();
     <div class="container-wrapper">
         <div class="container">
             <div class="subcontainer">
-
-                <div id="all" style="color: #ff3700;">
+                <div id="all" style="color: #ff3700;" onclick="showAll()">
                     ALL
                 </div>
-                <div id="pending">
+                <div id="pending" onclick="showPending()">
                     PENDING
                 </div>
-                <div id="completed">
+                <div id="completed" onclick="showCompleted()">
                     COMPLETED
                 </div>
             </div>
-
+            
             <div class="search-bar">
                 <i class="icon fas fa-search"></i>
                 <input type="text" id="searchBar" placeholder="Search items..." onkeyup="searchitem(event)">
@@ -525,29 +532,102 @@ $conn->close();
                 <ul>
                     <?php foreach ($checklist_items as $item) : ?>
                     <li>
-                        <form method="POST" style="display: flex; align-items: center; width: 100%;">
+                        <form method="POST" action="index.php?taskList=<?php echo urlencode($taskList); ?>" style="display: flex; align-items: center; width: 100%;">
                             <input type="hidden" name="itemId" value="<?php echo $item['itemId']; ?>">
                             <input type="hidden" name="status" value="<?php echo $item['status']; ?>">
                             <input type="checkbox" name="update_status" onchange="this.form.submit();"
                                 <?php echo $item['status'] == 1 ? 'checked' : ''; ?>
                                 style="margin-right: 10px; accent-color: #ff3700;">
                             <span><?php echo htmlspecialchars($item['description']); ?></span>
-                            <button type="submit" name="update_item" class="update-icon">Update</button>
-                            <button type="submit" name="delete_item" class="delete-icon">
-                                <i class="fas fa-trash-alt"> </i>
+                            <button type="submit" class="delete-icon" id="delete_item" name="delete_item" value="delete">
+                              <i class="fas fa-trash-alt"></i> 
                             </button>
-
                         </form>
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <?php else : ?>
-                <p>No items yet.</p>
                 <?php endif; ?>
             </div>
-
+           
+            <p id="no-all" class="no-items">No items yet.</p>
+            <p id="no-pending" class="no-items">No pending items.</p>
+            <p id="no-completed" class="no-items">No completed items.</p>
         </div>
     </div>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.items li');
+            const showAllBtn = document.getElementById('all');
+            const showPendingBtn = document.getElementById('pending');
+            const showCompletedBtn = document.getElementById('completed');
+            const noAllMessage = document.getElementById('no-all');
+            const noPendingMessage = document.getElementById('no-pending');
+            const noCompletedMessage = document.getElementById('no-completed');
+
+            function showAll() {
+                let hasItems = false;
+                items.forEach(item => {
+                    item.style.display = 'block';
+                    hasItems = true;
+                });
+                showAllBtn.style.color = "#ff3700";
+                showPendingBtn.style.color = "white";
+                showCompletedBtn.style.color = "white";
+                noAllMessage.style.display = hasItems ? 'none' : 'block';
+                noPendingMessage.style.display = 'none';
+                noCompletedMessage.style.display = 'none';
+            }
+
+            function showPending() {
+                let hasPending = false;
+                items.forEach(item => {
+                    const status = item.querySelector('input[name="update_status"]').checked;
+                    if (!status) {
+                        item.style.display = 'block';
+                        hasPending = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                showAllBtn.style.color = "white";
+                showPendingBtn.style.color = "#ff3700";
+                showCompletedBtn.style.color = "white";
+                noPendingMessage.style.display = hasPending ? 'none' : 'block';
+                noAllMessage.style.display = 'none';
+                noCompletedMessage.style.display = 'none';
+            }
+
+            function showCompleted() {
+                let hasCompleted = false;
+                items.forEach(item => {
+                    const status = item.querySelector('input[name="update_status"]').checked;
+                    if (status) {
+                        item.style.display = 'block';
+                        hasCompleted = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                showAllBtn.style.color = "white";
+                showPendingBtn.style.color = "white";
+                showCompletedBtn.style.color = "#ff3700";
+                noCompletedMessage.style.display = hasCompleted ? 'none' : 'block';
+                noAllMessage.style.display = 'none';
+                noPendingMessage.style.display = 'none';
+            }
+
+            showAllBtn.addEventListener('click', showAll);
+            showPendingBtn.addEventListener('click', showPending);
+            showCompletedBtn.addEventListener('click', showCompleted);
+            
+            // Call showAll initially to determine if there are any items
+            showAll();
+        });
+    
+    </script>
+  
     <script>
     function searchitem(event) {
         var searchTerm = event.target.value.toLowerCase();

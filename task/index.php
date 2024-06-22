@@ -318,6 +318,16 @@
         transform: translateY(-80%);
         color: gray;
     }
+    .item:hover{
+        color: #ff3700;
+        
+    }
+    .no-tasks{
+        text-align: center;
+        font-size: 20px;
+        margin-top: 20px;
+        color: #ff3700;
+    }
     </style>
 
 
@@ -350,19 +360,18 @@
     <div class="output">
         <div class="main">
             <div class="subcontainer">
-
-                <div id="all" style="color: #ff3700;">
+                <div id="all" style="color: #ff3700;" onclick="showAll()">
                     ALL
                 </div>
-                <div id="pending">
+                <div id="pending" onclick="showPending()">
                     PENDING
                 </div>
-                <div id="completed">
+                <div id="completed" onclick="showCompleted()">
                     COMPLETED
                 </div>
             </div>
 
-
+            
             <div class="search-bar">
                 <i class="icon fas fa-search"></i>
                 <input type="text" id="searchBar" placeholder="Search tasks..." onkeyup="searchTask(event)">
@@ -398,29 +407,30 @@
 
        
 
-           if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (isset($_POST["checkbox"]) && is_array($_POST["checkbox"])) {
-                // Retrieve checkbox status
-                $checkboxes = $_POST["checkbox"];
-        
-                // Update the tasks in the database
-                foreach ($checkboxes as $taskList => $status) {
-                    // Convert checkbox status to 'Successful'
-                    $statusValue = isset($status) ? 'Successful' : '';
-        
-                    $sql = "UPDATE task SET status = '$statusValue' WHERE taskList = '$taskList' AND email = '$email'";
-                    $conn->query($sql);
-                }
+       if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["checkbox"]) && is_array($_POST["checkbox"])) {
+            // Retrieve checkbox status
+            $checkboxes = $_POST["checkbox"];
+    
+            // Update the tasks in the database
+            foreach ($checkboxes as $taskList => $status) {
+                // Convert checkbox status to 'Successful'
+                $statusValue = isset($status) ? '1' : '0';
+    
+                $sql = "UPDATE task SET status = '$statusValue' WHERE taskList = '$taskList' AND email = '$email'";
+                $conn->query($sql);
             }
-            
-           
-           // Check if delete button was clicked
-           if (isset($_POST['delete'])) {
-               $idToDelete = $_POST['delete'];
-               $deleteSql = "DELETE FROM task WHERE taskList = '$idToDelete' AND email = '$email'";
-               $conn->query($deleteSql);
-           }
+        }
+        
+       
+       // Check if delete button was clicked
+       if (isset($_POST['delete'])) {
+           $idToDelete = $_POST['delete'];
+           $deleteSql = "DELETE FROM task WHERE taskList = '$idToDelete' AND email = '$email'";
+           $conn->query($deleteSql);
        }
+   }
+   
        
        
        // Retrieve data from the task table
@@ -434,7 +444,7 @@
             $taskList = $row["taskList"];
             echo "<tr>
                     <td>" . $row["dateCreated"] . "</td>
-                    <td ><a href='../item/index.php?taskList={$taskList}' style='color: white; text-decoration: none; '>" . $row["taskList"] . "</a></td>
+                    <td ><a href='../item/index.php?taskList={$taskList}' style=' text-decoration: none; ' class='item'>" . $row["taskList"] . "</a></td>
                     <td>" . $row["caption"] . "</td>
                     <td><input type='checkbox' style='accent-color: #ff3700; width: 20px; height: 20px' name='checkbox[" . $taskList . "]' " . ($row["status"] ? "checked" : "") . "></td>
                     <td><button id='update' type='submit'>Update</button><button name='delete' type='submit' id='delete' value='" . $taskList . "'>Delete</button></td>
@@ -456,10 +466,84 @@
 
 
                 </table>
-
+                <p id="no-tasks" class="no-tasks">No tasks yet.</p>
+                <p id="no-pending-tasks" class="no-tasks">No pending tasks.</p>
+                <p id="no-completed-tasks" class="no-tasks">No completed tasks.</p>
             </div>
         </div>
     </div>
+     
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        showAll(); // Show all tasks by default and handle the no-tasks logic
+    });
+
+    function showAll() {
+        const rows = document.querySelectorAll('#taskListTable tbody tr');
+        let hasTasks = rows.length > 0;
+
+        rows.forEach(row => {
+            row.style.display = 'table-row';
+        });
+
+        document.getElementById('all').style.color = '#ff3700';
+        document.getElementById('pending').style.color = 'white';
+        document.getElementById('completed').style.color = 'white';
+
+        // Show or hide "No tasks yet" message
+        document.getElementById('no-tasks').style.display = hasTasks ? 'none' : 'block';
+        document.getElementById('no-pending-tasks').style.display = 'none';
+        document.getElementById('no-completed-tasks').style.display = 'none';
+    }
+
+    function showPending() {
+        const rows = document.querySelectorAll('#taskListTable tbody tr');
+        let hasPendingTasks = false;
+
+        rows.forEach(row => {
+            const checkbox = row.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = 'table-row';
+                hasPendingTasks = true;
+            }
+        });
+
+        document.getElementById('pending').style.color = '#ff3700';
+        document.getElementById('all').style.color = 'white';
+        document.getElementById('completed').style.color = 'white';
+
+        // Show or hide "No pending tasks" message
+        document.getElementById('no-pending-tasks').style.display = hasPendingTasks ? 'none' : 'block';
+        document.getElementById('no-tasks').style.display = 'none';
+        document.getElementById('no-completed-tasks').style.display = 'none';
+    }
+
+    function showCompleted() {
+        const rows = document.querySelectorAll('#taskListTable tbody tr');
+        let hasCompletedTasks = false;
+
+        rows.forEach(row => {
+            const checkbox = row.querySelector('input[type="checkbox"]');
+            if (!checkbox.checked) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = 'table-row';
+                hasCompletedTasks = true;
+            }
+        });
+
+        document.getElementById('completed').style.color = '#ff3700';
+        document.getElementById('all').style.color = 'white';
+        document.getElementById('pending').style.color = 'white';
+
+        // Show or hide "No completed tasks" message
+        document.getElementById('no-completed-tasks').style.display = hasCompletedTasks ? 'none' : 'block';
+        document.getElementById('no-tasks').style.display = 'none';
+        document.getElementById('no-pending-tasks').style.display = 'none';
+    }
+</script>
 
 
     <script>
