@@ -246,18 +246,7 @@
 
     }
 
-    #all,
-    #completed,
-    #pending {
-        transition: 0.3s ease;
-    }
-
-    #pending:hover,
-    #completed:hover,
-    #all:hover {
-        color: #ff3700;
-    }
-
+   
     #update,
     #delete {
         padding: 7px;
@@ -327,6 +316,23 @@
         font-size: 20px;
         margin-top: 20px;
         color: #ff3700;
+    }
+
+    /* Define the styles for the elements */
+    #completed, #pending, #all {
+      transition: color 0.2s ease;
+    }
+    
+    #completed.selected, #completed:hover {
+      color: #ff3700;
+    }
+    
+    #pending.selected, #pending:hover {
+      color: #ff3700;
+    }
+    
+    #all.selected, #all:hover {
+      color: #ff3700;
     }
     </style>
 

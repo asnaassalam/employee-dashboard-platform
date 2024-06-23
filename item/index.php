@@ -429,14 +429,14 @@ $conn->close();
     #all,
     #completed,
     #pending {
-        transition: 0.3s ease;
+        
         cursor: pointer;
     }
 
     #pending:hover,
     #completed:hover,
     #all:hover {
-        color: #ff3700;
+        
         cursor: pointer;
     }
 
@@ -469,6 +469,22 @@ $conn->close();
             text-align: center;
             color: red;
            
+        }
+        /* Define the styles for the elements */
+        #completed, #pending, #all {
+          transition: color 0.2s ease;
+        }
+        
+        #completed.selected, #completed:hover {
+          color: #ff3700;
+        }
+        
+        #pending.selected, #pending:hover {
+          color: #ff3700;
+        }
+        
+        #all.selected, #all:hover {
+          color: #ff3700;
         }
     </style>
 </head>
