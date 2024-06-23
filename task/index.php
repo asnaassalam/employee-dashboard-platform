@@ -535,8 +535,8 @@
         });
 
         document.getElementById('completed').style.color = '#ff3700';
-        document.getElementById('all').style.color = 'white';
         document.getElementById('pending').style.color = 'white';
+        document.getElementById('all').style.color = 'white';
 
         // Show or hide "No completed tasks" message
         document.getElementById('no-completed-tasks').style.display = hasCompletedTasks ? 'none' : 'block';

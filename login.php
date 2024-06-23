@@ -19,7 +19,9 @@
       
 <link rel="stylesheet" href="stylesheet/login.css">
 <style>
- 
+ .form{
+  border: 3px solid #fb4a36;
+ }
   #alertbox{
         display: flex;
         justify-content: center;
