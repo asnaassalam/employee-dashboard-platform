@@ -57,22 +57,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_item'])) {
     exit();
 }
 
-// Handle updating checklist items status
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_POST['update_status'])) {
-    $itemId = intval($_POST['itemId']);
-    $currentStatus = intval($_POST['update_status']); // Convert 'on' or 'off' to integer 1 or 0
-    $newStatus = $currentStatus === 1 ? 0 : 1; // Toggle status between 0 and 1
 
-    $update_sql = "UPDATE item SET status = ? WHERE itemId = ? AND taskList = ?";
-    $stmt = $conn->prepare($update_sql);
-    $stmt->bind_param("iis", $newStatus, $itemId, $taskList); // Use "iis": integer, integer, string
-    $stmt->execute();
-    $stmt->close();
 
-    
 
-    // No need to redirect, update is done via AJAX
-}
+
+
+// Retrieve the current status from the database
+$currentStatusQuery = "SELECT status FROM item WHERE itemId = ? AND taskList = ?";
+$stmt = $conn->prepare($currentStatusQuery);
+$stmt->bind_param("is", $_POST['itemId'], $taskList);
+$stmt->execute();
+$stmt->bind_result($dbStatus);
+$stmt->fetch();
+$stmt->close();
+
+// Determine the new status based on the current status
+$newStatus = isset($_POST['update_status']) ? 1 : 0;
+
+
+
+// Update the status in the database
+$stmt = $conn->prepare("UPDATE item SET status = ? WHERE itemId = ? AND taskList = ?");
+$stmt->bind_param("iis", $newStatus, $_POST['itemId'], $taskList);
+$stmt->execute();
+$affectedRows = $stmt->affected_rows; // Store the affected rows count
+$stmt->close();
+
+
 
 
 
@@ -548,18 +559,17 @@ $conn->close();
                 <ul>
                     <?php foreach ($checklist_items as $item) : ?>
                     <li>
-                        <form method="POST" action="index.php?taskList=<?php echo urlencode($taskList); ?>" style="display: flex; align-items: center; width: 100%;">
+                            <form method="POST" action="index.php?taskList=<?php echo urlencode($taskList); ?>" style="display: flex; align-items: center; width: 100%;">
                             <input type="hidden" name="itemId" value="<?php echo $item['itemId']; ?>">
-                            <input type="hidden" name="status" value="<?php echo $item['status']; ?>">
                             <input type="checkbox" name="update_status" onchange="this.form.submit();"
                                 <?php echo $item['status'] == 1 ? 'checked' : ''; ?>
                                 style="margin-right: 10px; accent-color: #ff3700;">
                             <span><?php echo htmlspecialchars($item['description']); ?></span>
                             <button type="submit" class="delete-icon" id="delete_item" name="delete_item" value="delete">
-                              <i class="fas fa-trash-alt"></i> 
+                                <i class="fas fa-trash-alt"></i>
                             </button>
-                        </form>
-                    </li>
+                            </form>
+                     </li>
                     <?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
@@ -571,6 +581,37 @@ $conn->close();
         </div>
     </div>
     
+    <script>
+    $(document).ready(function() {
+      $('#checklistForm').on('submit', function(e) {
+        e.preventDefault();
+        var itemId = $('#itemId').val();
+        var updateStatus = $('#updateCheckbox').is(':checked') ? 1 : 0;
+        $.ajax({
+          url: 'index.php',
+          type: 'POST',
+          data: { itemId: itemId, updateStatus: updateStatus, action: 'update_status' },
+          success: function(response) {
+            // Handle the response from the server
+            console.log(response);
+            // Update the checkbox state based on the response
+            if (response === 'success') {
+              $('#updateCheckbox').prop('checked', updateStatus === 1);
+            } else {
+              console.error('Error updating status');
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+          }
+        });
+      });
+    
+      $('#updateCheckbox').on('change', function() {
+        $('#checklistForm').submit();
+      });
+    });
+</script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
