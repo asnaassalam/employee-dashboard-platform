@@ -579,7 +579,7 @@ ul {
         </li>
       </ul>
       <br>
-      <p>&copy; 2020 OneStop Cloud. All rights reserved.</p>
+      <p>&copy; 2024 OneStop Cloud. All rights reserved.</p>
      
     </div>
   </footer>
