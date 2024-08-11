@@ -48,9 +48,9 @@ $stmt->close();
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_item'])) {
     $description = htmlspecialchars(trim($_POST['description']));
     $status = 0; // Default status (0 for Pending)
-    $insert_sql = "INSERT INTO item (taskList, description, status) VALUES (?, ?, ?)";
+    $insert_sql = "INSERT INTO item (taskList, description, status, email) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($insert_sql);
-    $stmt->bind_param("ssi", $taskList, $description, $status); // Use "ssi" for two strings and an integer
+    $stmt->bind_param("ssis", $taskList, $description, $status, $email); 
     $stmt->execute();
     $stmt->close();
     header("Location: index.php?taskList=" . urlencode($taskList));
@@ -63,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_item'])) {
 
 
 // Retrieve the current status from the database
-$currentStatusQuery = "SELECT status FROM item WHERE itemId = ? AND taskList = ?";
+$currentStatusQuery = "SELECT status FROM item WHERE itemId = ? AND taskList = ? AND email = ?";
 $stmt = $conn->prepare($currentStatusQuery);
-$stmt->bind_param("is", $_POST['itemId'], $taskList);
+$stmt->bind_param("iss", $_POST['itemId'], $taskList , $email);
 $stmt->execute();
 $stmt->bind_result($dbStatus);
 $stmt->fetch();
@@ -77,8 +77,8 @@ $newStatus = isset($_POST['update_status']) ? 1 : 0;
 
 
 // Update the status in the database
-$stmt = $conn->prepare("UPDATE item SET status = ? WHERE itemId = ? AND taskList = ?");
-$stmt->bind_param("iis", $newStatus, $_POST['itemId'], $taskList);
+$stmt = $conn->prepare("UPDATE item SET status = ? WHERE itemId = ? AND taskList = ? AND email = ?");
+$stmt->bind_param("iiss", $newStatus, $_POST['itemId'], $taskList , $email);
 $stmt->execute();
 $affectedRows = $stmt->affected_rows; // Store the affected rows count
 $stmt->close();
@@ -99,9 +99,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_P
         die("TaskList parameter is missing.");
     }
     
-    $delete_sql = "DELETE FROM item WHERE itemId = ? AND taskList = ?";
+    $delete_sql = "DELETE FROM item WHERE itemId = ? AND taskList = ? AND email = ?";
     $stmt = $conn->prepare($delete_sql);
-    $stmt->bind_param("is", $itemId, $taskList); // Use "is": integer, string
+    $stmt->bind_param("iss", $itemId, $taskList , $email); // Use "is": integer, string
     $stmt->execute();
     $stmt->close();
     header("Location: index.php?taskList=" . urlencode($taskList));
@@ -110,9 +110,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_P
 
 
 // Fetch checklist items
-$items_sql = "SELECT itemId, description, status FROM item WHERE taskList = ?";
+$items_sql = "SELECT itemId, description, status FROM item WHERE taskList = ? AND email = ?";
 $stmt = $conn->prepare($items_sql);
-$stmt->bind_param("s", $taskList); // Use "s" for the string parameter
+$stmt->bind_param("ss", $taskList , $email); // Use "ss" for the string parameter
 $stmt->execute();
 $items_result = $stmt->get_result();
 $checklist_items = $items_result->fetch_all(MYSQLI_ASSOC);
