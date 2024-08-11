@@ -1,10 +1,10 @@
 <?php
 
-   session_start();
-   if(!isset($_SESSION['userloggedin'])) {
+session_start();
+if (!isset($_SESSION['userloggedin'])) {
     header("Location: ../login.php");
     exit();
-   }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,217 +34,217 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
     <style>
-    * {
-        margin: 0px;
-        padding: 0px;
+        * {
+            margin: 0px;
+            padding: 0px;
 
 
-    }
+        }
 
-    body {
-        background: #1a1a1a;
-        margin-bottom: 50px;
-        font-family: "Poppins", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        text-decoration: none;
+        body {
+            background: #1a1a1a;
+            margin-bottom: 50px;
+            font-family: "Poppins", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            text-decoration: none;
 
-    }
-
-
-    .content {
-        padding-left: 23px;
-        font-family: "Poppins", sans-serif;
-        font-size: 22px;
-        width: 350px;
-        height: 400px;
-        padding-top: 10px;
-        background: #212121;
-        border: 2px solid transparent;
-        border-radius: 10px;
-        color: white;
-        padding-right: 23px;
-        margin-left: 90px;
-        margin-bottom: 30px;
-        display: flex;
-        padding-right: 950px;
-        padding-left: 40px;
-
-    }
+        }
 
 
+        .content {
+            padding-left: 23px;
+            font-family: "Poppins", sans-serif;
+            font-size: 22px;
+            width: 350px;
+            height: 400px;
+            padding-top: 10px;
+            background: #212121;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: white;
+            padding-right: 23px;
+            margin-left: 90px;
+            margin-bottom: 30px;
+            display: flex;
+            padding-right: 950px;
+            padding-left: 40px;
+
+        }
 
 
-    .date {
-        color: white;
-        font-size: 14px;
-        font-family: "Poppins", sans-serif;
-        margin-left: 5px;
-        margin-bottom: 30px;
-        font-weight: 300;
-    }
-
-    .card {
-        width: 250px;
-        height: 330px;
-        background: linear-gradient(#212121, #212121) padding-box,
-            linear-gradient(145deg, #ff6136, #ff3700, transparent 80%) border-box;
-        border: 2px solid transparent;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        cursor: text;
-        transform-origin: right bottom;
-        transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
-        margin-left: 16px;
-        margin-bottom: 30px;
-        margin-right: 12px;
-        padding-left: 20px;
-        transition: transform 0.5s;
-    }
 
 
-    .card .main-content {
-        flex: 1;
-    }
+        .date {
+            color: white;
+            font-size: 14px;
+            font-family: "Poppins", sans-serif;
+            margin-left: 5px;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
 
-    .card .header span:first-child {
-        font-weight: 300;
-        color: gray;
-        margin-right: 4px;
-        font-size: 14px;
+        .card {
+            width: 250px;
+            height: 330px;
+            background: linear-gradient(#212121, #212121) padding-box,
+                linear-gradient(145deg, #ff6136, #ff3700, transparent 80%) border-box;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            cursor: text;
+            transform-origin: right bottom;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+            margin-left: 16px;
+            margin-bottom: 30px;
+            margin-right: 12px;
+            padding-left: 20px;
+            transition: transform 0.5s;
+        }
 
-    }
 
-    .card .title {
-        font-size: 20px;
-        margin: 24px 0 16px;
-        font-weight: 400;
-        color: white;
+        .card .main-content {
+            flex: 1;
+        }
 
-    }
+        .card .header span:first-child {
+            font-weight: 300;
+            color: gray;
+            margin-right: 4px;
+            font-size: 14px;
 
-    .card .description {
-        display: flex;
-        gap: 8px;
-        font-size: 15px;
-        color: gray;
-    }
+        }
 
-    .notification-container {
-        display: flex;
-        flex-wrap: wrap;
-    }
+        .card .title {
+            font-size: 20px;
+            margin: 24px 0 16px;
+            font-weight: 400;
+            color: white;
 
-    .card:hover {
-        transform: scale(1.03);
-    }
+        }
 
-    .icon {
-        color: white;
-        font-size: 35px;
-        transition: all 0.4s ease;
+        .card .description {
+            display: flex;
+            gap: 8px;
+            font-size: 15px;
+            color: gray;
+        }
 
-    }
+        .notification-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
 
-    .btn {
-        border: none;
-        cursor: pointer;
-        margin-left: 180px;
-        margin-top: 130px;
-        background: none;
-        width: 60px;
-        height: 35px;
-        transition: all 0.4s ease;
+        .card:hover {
+            transform: scale(1.03);
+        }
 
-    }
+        .icon {
+            color: white;
+            font-size: 35px;
+            transition: all 0.4s ease;
 
-   
+        }
 
-    .icon:hover {
-        color: red;
-    }
+        .btn {
+            border: none;
+            cursor: pointer;
+            margin-left: 180px;
+            margin-top: 130px;
+            background: none;
+            width: 60px;
+            height: 35px;
+            transition: all 0.4s ease;
 
-    #register {
-        transition: all 0.3s;
-    }
+        }
 
-    #register:hover {
-        background: none;
-        border: 1.7px solid #ff3700;
-        color: #ff3700;
-    }
 
-    .button:hover {
-        transform: scale(1.1);
-    }
 
-    .button {
-        transition: all 0.3s;
-    }
+        .icon:hover {
+            color: red;
+        }
 
-    .search {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 30px;
+        #register {
+            transition: all 0.3s;
+        }
 
-    }
+        #register:hover {
+            background: none;
+            border: 1.7px solid #ff3700;
+            color: #ff3700;
+        }
 
-    .input-box {
-        position: relative;
-        height: 40px;
-        max-width: 900px;
-        width: 100%;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    }
+        .button:hover {
+            transform: scale(1.1);
+        }
 
-    .input-box i,
-    .input-box .button {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+        .button {
+            transition: all 0.3s;
+        }
 
-    .input-box i {
-        left: 20px;
-        font-size: 30px;
-        color: #707070;
-    }
+        .search {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
 
-    .input-box input {
-        height: 100%;
-        width: 100%;
-        outline: none;
-        font-size: 18px;
-        font-weight: 400;
-        border: none;
-        padding: 0 155px 0 65px;
-        background-color: transparent;
-    }
+        }
 
-    .input-box .button {
-        right: 0px;
-        font-size: 16px;
-        font-weight: 400;
-        color: #fff;
-        border: none;
-        padding: 11.1px;
-        border-bottom-right-radius: 6px;
-        border-top-right-radius: 6px;
-        background-color: #ff3700;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
+        .input-box {
+            position: relative;
+            height: 40px;
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-box i,
+        .input-box .button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .input-box i {
+            left: 20px;
+            font-size: 30px;
+            color: #707070;
+        }
+
+        .input-box input {
+            height: 100%;
+            width: 100%;
+            outline: none;
+            font-size: 18px;
+            font-weight: 400;
+            border: none;
+            padding: 0 155px 0 65px;
+            background-color: transparent;
+        }
+
+        .input-box .button {
+            right: 0px;
+            font-size: 16px;
+            font-weight: 400;
+            color: #fff;
+            border: none;
+            padding: 11.1px;
+            border-bottom-right-radius: 6px;
+            border-top-right-radius: 6px;
+            background-color: #ff3700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 
 <body>
 
     <?php
-        include_once('../navbar-logged.php');
+    include_once('../navbar-logged.php');
     ?>
     <p
         style="display: flex; justify-content: center; align-items: center; margin-top: 25px; font-size: 50px; color: white; margin-bottom: 30px;">
@@ -293,17 +293,8 @@
     date_default_timezone_set('Asia/Colombo');
 
     // Connect to the database
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ai-php";
+    include '../config.php';
     $email = $_SESSION['userloggedin'];
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
 
     // Handle delete request
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_id'])) {
@@ -365,23 +356,27 @@
     }
 
     $conn->close();
-?>
+    ?>
+
+    <?php
+    include_once('../footer.html');
+    ?>
     <script>
-    function searchNotes(event) {
-        var searchTerm = event.target.value.toLowerCase();
-        var notes = document.querySelectorAll('.notification-container .row .card');
-        notes.forEach(function(note) {
-            var noteTitle = note.querySelector('.title')?.textContent.toLowerCase() || '';
-            var noteDescription = note.querySelector('.description')?.textContent.toLowerCase() || '';
-            note.style.display = (noteTitle.includes(searchTerm) || noteDescription.includes(searchTerm)) ?
-                'block' : 'none';
-        });
-        if (searchTerm === '') {
+        function searchNotes(event) {
+            var searchTerm = event.target.value.toLowerCase();
+            var notes = document.querySelectorAll('.notification-container .row .card');
             notes.forEach(function(note) {
-                note.style.display = 'block';
+                var noteTitle = note.querySelector('.title')?.textContent.toLowerCase() || '';
+                var noteDescription = note.querySelector('.description')?.textContent.toLowerCase() || '';
+                note.style.display = (noteTitle.includes(searchTerm) || noteDescription.includes(searchTerm)) ?
+                    'block' : 'none';
             });
+            if (searchTerm === '') {
+                notes.forEach(function(note) {
+                    note.style.display = 'block';
+                });
+            }
         }
-    }
     </script>
 
 

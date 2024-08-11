@@ -87,7 +87,9 @@
     
 </form>
  </div>
-
+<?php
+include_once('footer.html');
+?>
  <script>
     function hideAlertBox() {
         const alertBox = document.getElementById('alertbox');

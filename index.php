@@ -579,7 +579,7 @@ ul {
         </li>
       </ul>
       <br>
-      <p>&copy; 2024 OneStop Cloud. All rights reserved.</p>
+      <p>&copy; 2024 All rights reserved. | Authored by <strong>Asna Assalam</strong></p>
      
     </div>
   </footer>

@@ -164,6 +164,9 @@ transition: all 0.3s;
     </div>
     </div>
 
+<?php
+include_once ('footer.html');
+?>
 </body>
 
 </html>

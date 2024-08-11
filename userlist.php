@@ -288,18 +288,7 @@ td.text-right {
             </thead>
             <tbody>
                 <?php
-                // Establish a connection to the ai-php database
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "ai-php";
-
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                include 'config.php';
 
                 // Retrieve data from the employee table
                 $sql = "SELECT * FROM employee";
