@@ -27,6 +27,9 @@ This project is an Employee Dashboard Platform where users can register, log in,
 
 ## Screenshots
 
+### Employee Dashboard
+![Employee Dashboard Screenshot](UI-Screenshots/employee-Dashboard.png)
+
 ### Notes App
 ![Notes App Screenshot](UI-Screenshots/Note%20Management.png)
 
@@ -38,9 +41,6 @@ This project is an Employee Dashboard Platform where users can register, log in,
 
 ### Login
 ![Login Screenshot](UI-Screenshots/Login.png)
-
-### Employee Dashboard
-![Employee Dashboard Screenshot](UI-Screenshots/employee-Dashboard.png)
 
 
 ## Getting Started
