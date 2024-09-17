@@ -353,6 +353,11 @@ if (!isset($_SESSION['userloggedin'])) {
             echo '</div>';
         }
         echo '</div>';
+    } else {
+        // If no notes are found, display a message
+        echo '<div style="text-align: center; color: red; font-size: 26px; margin-top: 50px; margin-bottom: 100px;">';
+        echo 'No notes to display.';
+        echo '</div>';
     }
 
     $conn->close();
