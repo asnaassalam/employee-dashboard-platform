@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 if (!isset($_SESSION['userloggedin'])) {
     header("Location: ../login.php");
@@ -8,12 +7,10 @@ if (!isset($_SESSION['userloggedin'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OneStop Cloud</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -51,7 +48,6 @@ if (!isset($_SESSION['userloggedin'])) {
 
         }
 
-
         .content {
             padding-left: 23px;
             font-family: "Poppins", sans-serif;
@@ -71,9 +67,6 @@ if (!isset($_SESSION['userloggedin'])) {
             padding-left: 40px;
 
         }
-
-
-
 
         .date {
             color: white;
@@ -159,8 +152,6 @@ if (!isset($_SESSION['userloggedin'])) {
 
         }
 
-
-
         .icon:hover {
             color: red;
         }
@@ -240,7 +231,6 @@ if (!isset($_SESSION['userloggedin'])) {
         }
     </style>
 </head>
-
 <body>
 
     <?php
@@ -250,9 +240,6 @@ if (!isset($_SESSION['userloggedin'])) {
         style="display: flex; justify-content: center; align-items: center; margin-top: 25px; font-size: 50px; color: white; margin-bottom: 30px;">
         Note App<br>
     </p>
-
-
-
     <div class="content center">
         <form action="" method="POST">
             <div id="notes"
@@ -271,7 +258,6 @@ if (!isset($_SESSION['userloggedin'])) {
                     style="height: 80px; width: 1250px; border: solid 1px #8c8787; margin-top: 7px; border-radius: 5px; font-size: 18px; cursor:text; padding-left: 4px; padding-top: 4px; background:none; color: gray; "
                     required></textarea>
             </div>
-
             <div>
                 <button type="submit" id="submit" class="button"
                     style="background: green; cursor: pointer; color: white; padding: 5px; border-radius: 3px; border: none; padding-top: 7px; padding-bottom: 7px; width: 500px; height: 40px; border:2px solid #ff3700; background: #ff3700; font-size: 18px; margin-left:390px; color: white;">
@@ -366,26 +352,34 @@ if (!isset($_SESSION['userloggedin'])) {
     <?php
     include_once('../footer.html');
     ?>
+
     <script>
         function searchNotes(event) {
-            var searchTerm = event.target.value.toLowerCase();
-            var notes = document.querySelectorAll('.notification-container .row .card');
-            notes.forEach(function(note) {
-                var noteTitle = note.querySelector('.title')?.textContent.toLowerCase() || '';
-                var noteDescription = note.querySelector('.description')?.textContent.toLowerCase() || '';
-                note.style.display = (noteTitle.includes(searchTerm) || noteDescription.includes(searchTerm)) ?
-                    'block' : 'none';
+            const query = event.target.value.toLowerCase();
+            const notesContainer = document.getElementById("notesContainer");
+            const notes = document.querySelectorAll(".card");
+            let found = false;
+
+            notes.forEach(note => {
+                const title = note.querySelector(".title").textContent.toLowerCase();
+                const description = note.querySelector(".description").textContent.toLowerCase();
+
+                if (title.includes(query) || description.includes(query)) {
+                    note.style.display = "block";
+                    found = true;
+                } else {
+                    note.style.display = "none";
+                }
             });
-            if (searchTerm === '') {
-                notes.forEach(function(note) {
-                    note.style.display = 'block';
-                });
+
+            // If no notes match the search query, display "No notes found" message
+            if (!found) {
+                notesContainer.innerHTML = '<p style="color: red; text-align: center; margin-top: 20px; font-size: 26px; margin-bottom: 50px;">No matching notes found.</p>';
+            } else {
+                notesContainer.innerHTML = ''; // Clear the message when notes are found
             }
         }
     </script>
 
-
-
 </body>
-
 </html>
