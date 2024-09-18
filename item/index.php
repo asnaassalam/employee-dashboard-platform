@@ -47,11 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_item'])) {
     exit();
 }
 
-
-
-
-
-
 // Retrieve the current status from the database
 $currentStatusQuery = "SELECT status FROM item WHERE itemId = ? AND taskList = ? AND email = ?";
 $stmt = $conn->prepare($currentStatusQuery);
@@ -64,19 +59,12 @@ $stmt->close();
 // Determine the new status based on the current status
 $newStatus = isset($_POST['update_status']) ? 1 : 0;
 
-
-
 // Update the status in the database
 $stmt = $conn->prepare("UPDATE item SET status = ? WHERE itemId = ? AND taskList = ? AND email = ?");
 $stmt->bind_param("iiss", $newStatus, $_POST['itemId'], $taskList, $email);
 $stmt->execute();
 $affectedRows = $stmt->affected_rows; // Store the affected rows count
 $stmt->close();
-
-
-
-
-
 
 // Handle deleting checklist items
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['itemId']) && isset($_POST['delete_item'])) {
@@ -546,13 +534,12 @@ $conn->close();
                     COMPLETED
                 </div>
             </div>
-
             <div class="search-bar">
                 <i class="icon fas fa-search"></i>
                 <input type="text" id="searchBar" placeholder="Search items..." onkeyup="searchitem(event)">
             </div>
+            <p id="no-results" style="display: none; color: red; margin-top: 20px; font-size: 23px;">No matching items found.</p> <!-- No results message -->
             <div class="items" style="margin-right: 15px;">
-
                 <?php if (!empty($checklist_items)) : ?>
                     <ul>
                         <?php foreach ($checklist_items as $item) : ?>
@@ -572,7 +559,6 @@ $conn->close();
                     </ul>
                 <?php endif; ?>
             </div>
-
             <p id="no-all" class="no-items">No items yet.</p>
             <p id="no-pending" class="no-items">No pending items.</p>
             <p id="no-completed" class="no-items">No completed items.</p>
@@ -689,19 +675,30 @@ $conn->close();
     </script>
 
     <script>
-        function searchitem(event) {
-            var searchTerm = event.target.value.toLowerCase();
-            var items = document.querySelectorAll('.items li');
-            items.forEach(function(item) {
-                var itemText = item.querySelector('span').textContent.toLowerCase();
-                if (itemText.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+    function searchitem(event) {
+        var searchTerm = event.target.value.toLowerCase();
+        var items = document.querySelectorAll('.items li');
+        var noResultsMessage = document.getElementById('no-results');
+        var visibleItems = 0;
+
+        items.forEach(function(item) {
+            var itemText = item.querySelector('span').textContent.toLowerCase();
+            if (itemText.includes(searchTerm)) {
+                item.style.display = 'flex'; // Show item
+                visibleItems++;
+            } else {
+                item.style.display = 'none'; // Hide item
+            }
+        });
+
+        // Show "No items found" message if no items match the search
+        if (visibleItems === 0) {
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
         }
-    </script>
+    }
+</script>
 </body>
 
 </html>

@@ -258,7 +258,7 @@ td.text-right {
         </div>
         <div class="navtext"
             style="text-decoration: none; display: flex; gap: 37px; font-size: 22px; margin-left: 70px; cursor: pointer; color:white;">
-            <a href="index.html">Home</a>
+            <a href="index.php">Home</a>
             <a>Features</a>
             <a>Updates</a>
             <a>Support</a>
