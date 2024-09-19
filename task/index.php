@@ -369,7 +369,6 @@ if (!isset($_SESSION['userloggedin'])) {
             </div>
         </div>
     </form>
-
     <div class="output">
         <div class="main">
             <div class="subcontainer">
@@ -383,8 +382,6 @@ if (!isset($_SESSION['userloggedin'])) {
                     COMPLETED
                 </div>
             </div>
-
-
             <div class="search-bar">
                 <i class="icon fas fa-search"></i>
                 <input type="text" id="searchBar" placeholder="Search tasks..." onkeyup="searchTask(event)">
@@ -463,9 +460,8 @@ if (!isset($_SESSION['userloggedin'])) {
                         ?>
 
                     </tbody>
-
-
                 </table>
+                <p id="no-search-results" class="no-tasks" style="display: none; color: red; margin-top: 20px; font-size: 23px;">No matching tasks found.</p>
                 <p id="no-tasks" class="no-tasks">No tasks yet.</p>
                 <p id="no-pending-tasks" class="no-tasks">No pending tasks.</p>
                 <p id="no-completed-tasks" class="no-tasks">No completed tasks.</p>
@@ -554,16 +550,29 @@ if (!isset($_SESSION['userloggedin'])) {
         function searchTask(event) {
             var searchTerm = event.target.value.toLowerCase();
             var tasks = document.querySelectorAll('.table tbody tr');
+            var hasResults = false; // Flag to track if any tasks are found
+
             tasks.forEach(function(task) {
                 var taskName = task.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
                 var taskCaption = task.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-                task.style.display = (taskName.includes(searchTerm) || taskCaption.includes(searchTerm)) ?
-                    'table-row' : 'none';
+
+                if (taskName.includes(searchTerm) || taskCaption.includes(searchTerm)) {
+                    task.style.display = 'table-row';
+                    hasResults = true; // Mark that a result has been found
+                } else {
+                    task.style.display = 'none';
+                }
             });
+
+            // If no search results, display the message
+            document.getElementById('no-search-results').style.display = hasResults ? 'none' : 'block';
+
+            // Reset display if search is empty
             if (searchTerm === '') {
                 tasks.forEach(function(task) {
                     task.style.display = 'table-row';
                 });
+                document.getElementById('no-search-results').style.display = 'none'; // Hide the message when search is cleared
             }
         }
     </script>
